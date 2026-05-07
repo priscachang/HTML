@@ -728,5 +728,10 @@ applyFilters();
 
 applyFilters();
 </script>
+<script>
+    if (!document.referrer.includes('sharepoint.com')) {
+      document.body.innerHTML = '<h1 style="text-align:center; margin-top:50px;">Direct access not allowed. Use SharePoint embed.</h1>';
+    }
+</script>
 </body>
 </html>
