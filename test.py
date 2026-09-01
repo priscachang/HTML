@@ -1,7 +1,7 @@
 """Simple demo script: main() calls helper functions that use loops."""
 
 
-def sum_to(limit):
+def sum_to(limit: int) -> int:
     """Return the sum of all integers from 1 up to (and including) limit."""
     total = 0
     for number in range(1, limit + 1):
@@ -9,9 +9,9 @@ def sum_to(limit):
     return total
 
 
-def fizzbuzz(limit):
+def fizzbuzz(limit: int) -> list[str]:
     """Return a list of FizzBuzz labels for 1..limit."""
-    labels = []
+    labels: list[str] = []
     for number in range(1, limit + 1):
         if number % 15 == 0:
             labels.append("FizzBuzz")
@@ -24,9 +24,9 @@ def fizzbuzz(limit):
     return labels
 
 
-def countdown(start):
+def countdown(start: int) -> list[int]:
     """Count down from start to 1 using a while loop."""
-    steps = []
+    steps: list[int] = []
     current = start
     while current > 0:
         steps.append(current)
@@ -34,17 +34,42 @@ def countdown(start):
     return steps
 
 
-def main():
-    limit = 15
+def _format_demo_output(limit: int = 15, countdown_start: int = 5) -> str:
+    """Create the same text the original demo printed, as a single string."""
+    lines: list[str] = []
 
-    print(f"Sum of 1..{limit} = {sum_to(limit)}")
+    lines.append(f"Sum of 1..{limit} = {sum_to(limit)}")
 
-    print("FizzBuzz:")
+    lines.append("FizzBuzz:")
     for label in fizzbuzz(limit):
-        print(f"  {label}")
+        lines.append(f"  {label}")
 
-    print(f"Countdown: {countdown(5)}")
+    lines.append(f"Countdown: {countdown(countdown_start)}")
+
+    return "\n".join(lines)
 
 
-if __name__ == "__main__":
-    main()
+def main(args):
+    """StackAI Code Node entrypoint.
+
+    Reads optional configuration from args and returns the demo output.
+    """
+    # Optional inputs (safe defaults)
+    limit = args.get("limit", 15) if isinstance(args, dict) else 15
+    countdown_start = args.get("countdown_start", 5) if isinstance(args, dict) else 5
+
+    output_text = _format_demo_output(limit=limit, countdown_start=countdown_start)
+
+    return {
+        "limit": limit,
+        "sum": sum_to(limit),
+        "fizzbuzz": fizzbuzz(limit),
+        "countdown": countdown(countdown_start),
+        "output": output_text,
+        # Convenience if you want to access the fetched file content:
+        "source_from_action_0": (
+            args.get("nodes", {}).get("action-0", {}).get("content")
+            if isinstance(args, dict)
+            else None
+        ),
+    }
